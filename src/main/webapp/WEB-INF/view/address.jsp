@@ -23,7 +23,7 @@
                         <td>${address.name}</td>
                          <td>${address.district}</td>
                         <td>${address.state}</td>
-                        <td>${address.pi}</td>
+                        <td>${address.pin}</td>
                     </tr>
                 </c:forEach>
             </tbody>
