@@ -11,6 +11,9 @@
                 <tr>
                     <th>Id</th>
                     <th>Address</th>
+                    <th>District</th>
+                    <th>State</th>
+                    <th>Pin</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,6 +21,9 @@
                     <tr>
                         <td>${address.id}</td>
                         <td>${address.name}</td>
+                         <td>${address.district}</td>
+                        <td>${address.state}</td>
+                        <td>${address.pi}</td>
                     </tr>
                 </c:forEach>
             </tbody>
