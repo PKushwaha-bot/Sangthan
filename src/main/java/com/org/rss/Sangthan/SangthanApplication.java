@@ -1,5 +1,6 @@
 package com.org.rss.Sangthan;
 
+import org.apache.kafka.common.serialization.IntegerDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +11,7 @@ import com.org.rss.Sangthan.Entity.Designation;
 import com.org.rss.Sangthan.Entity.Person;
 import com.org.rss.Sangthan.Entity.Shakha;
 import com.org.rss.Sangthan.Repository.AddressDAO;
+import com.org.rss.Sangthan.Repository.AddressDataDao;
 import com.org.rss.Sangthan.Repository.DesignationDao;
 import com.org.rss.Sangthan.Repository.PersonDAO;
 import com.org.rss.Sangthan.Repository.ShakhaDao;
@@ -20,7 +22,7 @@ public class SangthanApplication implements CommandLineRunner{
 	@Autowired
 	PersonDAO personDao;
 	@Autowired
-	AddressDAO addressDao;
+	AddressDataDao addressDao;
 	@Autowired
 	ShakhaDao shakhaDao;
 	
@@ -39,10 +41,12 @@ public class SangthanApplication implements CommandLineRunner{
 		address.setName("New Ashok Nagar");
 		address.setDistrict("Mayur  vihar");
 		address.setPin(110096);
+		address.setState("deoria");
 		
 		Shakha shakha = new Shakha();
 		shakha.setAddress(address);
 		shakha.setName("shubhash shakha");
+		
 		
 		Designation designation = new Designation();
 		designation.setName("Mukhya shikshak");
@@ -52,12 +56,15 @@ public class SangthanApplication implements CommandLineRunner{
 		person.setShakha(shakha); 
 		person.setDesignation(designation);
 		person.setName("premshankar kushwaha");
+		person.setEmail("premshankar.kushwaha@fiserv.com");
+		person.setContact_no("9625424871");
 		
 		designationDao.addDesignation(designation);
-		addressDao.addAddress(address);
+		addressDao.save(address);
 		shakhaDao.addShakha(shakha);
 		personDao.addPerson(person);
 			
+		
 		
 		
 	}

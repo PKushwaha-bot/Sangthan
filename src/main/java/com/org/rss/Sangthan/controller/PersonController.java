@@ -2,16 +2,21 @@ package com.org.rss.Sangthan.controller;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
+import com.org.rss.Sangthan.Exception.ObjectNotFoundException;
 import com.org.rss.Sangthan.Entity.Address;
 import com.org.rss.Sangthan.Entity.Designation;
 import com.org.rss.Sangthan.Entity.Person;
@@ -20,6 +25,10 @@ import com.org.rss.Sangthan.Service.AddressService;
 import com.org.rss.Sangthan.Service.DesignationService;
 import com.org.rss.Sangthan.Service.PersonService;
 import com.org.rss.Sangthan.Service.ShakhaService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(path = "sangthan")
@@ -33,6 +42,13 @@ public class PersonController {
 	DesignationService dService;
 	@Autowired
 	ShakhaService shakhaService;
+	
+	@ GetMapping("person")
+	@ResponseBody
+	public List<Person> getPerson() {
+		return service.getPersons();
+	}
+	
 	
 	@GetMapping(path = "persons")
 	public ModelAndView getPersons(ModelAndView map) {	
@@ -51,17 +67,22 @@ public class PersonController {
 	}
 	
 	@PostMapping(path = "addPerson",consumes = {"application/x-www-form-urlencoded;charset=UTF-8"})
-	public ModelAndView addPerson( Person person,ModelAndView map) {	
+	public ModelAndView addPerson( @Valid @ModelAttribute("person") Person person, BindingResult result,  ModelAndView map,HttpServletRequest request)  {	
+		result.getFieldError("name");
+		if(result.hasErrors()) {
+			map.addObject("person", person);
+			map.setViewName("registration");
+			return map;
+		}	
+		request.setAttribute("person", person);
 		map.addObject("addPersonSuccess",true);	
-		
-		int addressId = person.getAddress().getId();
+				int addressId = person.getAddress().getId();
 		Address address = new Address();
 		if(addressId != 0) {
 			address = addService.findById(addressId);
-			address.setPerson(null);
 			person.setAddress(address);			
-		} else {
-			person.setAddress(address);
+		} else {			
+			throw new ObjectNotFoundException("Address not found for given address id : "+addressId);
 		}
 		
 		int shakhaId = person.getShakha().getId();
@@ -70,7 +91,7 @@ public class PersonController {
 			shakha = shakhaService.findById(shakhaId);
 			person.setShakha(shakha);
 		} else {
-			person.setShakha(shakha);
+			throw new ObjectNotFoundException("Shakha not found for given shakha id : "+shakhaId);
 		}
 		
 		int desigId = person.getDesignation().getId();
@@ -79,7 +100,7 @@ public class PersonController {
 			desig = dService.findById(desigId);
 			person.setDesignation(desig);
 		} else {
-			person.setDesignation(desig);
+			throw new ObjectNotFoundException("designation not found for given designation id : "+desigId);
 		}
 		
 		addService.addAddress(address);
@@ -89,4 +110,18 @@ public class PersonController {
 		map.setViewName("registration");
 		return map;
 	}
+//	@ExceptionHandler(ObjectNotFoundException.class)
+//	public ModelAndView handleAndaccept(ObjectNotFoundException ex,HttpServletRequest request, HttpServletResponse response ) {
+//		ModelAndView view = new ModelAndView();
+//		view.addObject("person", request.getAttribute("person"));
+//		view.addObject("hasError", true);
+//		view.addObject("ErrorMessage", ex.getMessage());
+//		view.setViewName("registration");	
+//		return view;
+//	}	
 }
+// class ObjectNotFoundException extends RuntimeException {
+//	ObjectNotFoundException(String message) {
+//		super(message);
+//	}
+//}

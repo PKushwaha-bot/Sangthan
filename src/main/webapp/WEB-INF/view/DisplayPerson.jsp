@@ -11,6 +11,8 @@
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
+                      <th>Email</th>
+                        <th>Contact NO</th>
                 </tr>
             </thead>
             <tbody>
@@ -18,6 +20,8 @@
                     <tr>
                         <td>${person.id}</td>
                         <td>${person.name}</td>
+                        <td>${person.email}</td>
+                        <td>${person.contact_no}</td>
                     </tr>
                 </c:forEach>
             </tbody>

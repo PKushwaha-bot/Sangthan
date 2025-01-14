@@ -9,17 +9,25 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
-public class Address {
-	
+public class Address {	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	@Size(min = 10,max = 60,message = "address should be between 10 to 60 characters")
 	private String name;
+	@NotEmpty
 	private String district;
+	@NotBlank
 	private String state;
+	
 	private int pin;
 	@Transient
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "address")
